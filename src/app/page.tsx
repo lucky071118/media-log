@@ -1,4 +1,3 @@
-import { AuthCard } from "@/components/auth-card";
 import { MovieEntryForm } from "@/components/movie-entry-form";
 import { MovieList } from "@/components/movie-list";
 import { SetupCard } from "@/components/setup-card";
@@ -6,7 +5,7 @@ import { hasOwnerEmail, hasSupabaseEnv, isSiteOwnerEmail } from "@/lib/env";
 import { type MovieEntry } from "@/lib/movies";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import { createMovieEntry, deleteMovieEntry, signIn, signOut } from "./actions";
+import { createMovieEntry, deleteMovieEntry, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -89,22 +88,18 @@ export default async function Home({ searchParams }: HomePageProps) {
               <MetricCard label="Access" value="Public archive" />
             </section>
 
-            <div className="grid gap-8 xl:grid-cols-[1fr_380px]">
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                    Watch history
-                  </p>
-                  <h2 className="mt-2 text-3xl font-semibold text-white">
-                    My personal Letterboxd
-                  </h2>
-                </div>
-
-                {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
-                <MovieList deleteAction={deleteMovieEntry} isOwner={false} movies={movies} />
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+                  Watch history
+                </p>
+                <h2 className="mt-2 text-3xl font-semibold text-white">
+                  My personal Letterboxd
+                </h2>
               </div>
 
-              <AuthCard action={signIn} />
+              {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
+              <MovieList deleteAction={deleteMovieEntry} isOwner={false} movies={movies} />
             </div>
           </>
         ) : (
