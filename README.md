@@ -148,7 +148,7 @@ npx supabase db push
 ```text
 src/app/                    Next.js routes and server actions
 src/components/             UI components
-src/lib/                    Supabase and movie helpers
+src/lib/                    Supabase and media helpers
 supabase/migrations/        SQL schema changes
 supabase/config.toml        Local Supabase CLI configuration
 ```

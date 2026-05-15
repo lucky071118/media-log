@@ -45,20 +45,20 @@ for select
 to public
 using (true);
 
-create policy "Users can create their own movie entries"
+create policy "Users can create their own media entries"
 on public.media_entries
 for insert
 to authenticated
 with check (auth.uid() = user_id);
 
-create policy "Users can update their own movie entries"
+create policy "Users can update their own media entries"
 on public.media_entries
 for update
 to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
-create policy "Users can delete their own movie entries"
+create policy "Users can delete their own media entries"
 on public.media_entries
 for delete
 to authenticated
