@@ -5,12 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getBaseUrl, getErrorMessage, isSiteOwnerEmail } from "@/lib/env";
-import {
-  buildPosterPath,
-  getPosterExtension,
-  parseMovieFormData,
-  parsePosterUpload,
-} from "@/lib/movies";
+import { parseMovieFormData } from "@/lib/movies";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function redirectWithMessage(kind: "error" | "message", message: string): never {
@@ -67,12 +62,6 @@ export async function createMovieEntry(formData: FormData) {
     redirectWithMessage("error", parsedMovie.error);
   }
 
-  const parsedPoster = parsePosterUpload(formData);
-
-  if (!parsedPoster.success) {
-    redirectWithMessage("error", parsedPoster.error);
-  }
-
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -87,44 +76,12 @@ export async function createMovieEntry(formData: FormData) {
     redirectWithMessage("error", "Only the site owner can manage this media log.");
   }
 
-  let posterPath: string | null = null;
-
-  if (parsedPoster.data.file) {
-    const extension = getPosterExtension(parsedPoster.data.file.name, parsedPoster.data.file.type);
-
-    if (!extension) {
-      redirectWithMessage("error", "Poster files must be JPG, PNG, WEBP, or GIF images.");
-    }
-
-    posterPath = buildPosterPath(user.id, extension);
-
-    const { error: uploadError } = await supabase.storage
-      .from("posters")
-      .upload(posterPath, parsedPoster.data.file, {
-        cacheControl: "3600",
-        contentType: parsedPoster.data.file.type,
-        upsert: false,
-      });
-
-    if (uploadError) {
-      redirectWithMessage(
-        "error",
-        getErrorMessage(uploadError, "Could not upload the poster image."),
-      );
-    }
-  }
-
   const { error } = await supabase.from("media_entries").insert({
     ...parsedMovie.data,
-    poster_path: posterPath,
     user_id: user.id,
   });
 
   if (error) {
-    if (posterPath) {
-      await supabase.storage.from("posters").remove([posterPath]);
-    }
-
     redirectWithMessage("error", getErrorMessage(error, "Could not save the movie entry."));
   }
 
@@ -153,17 +110,6 @@ export async function deleteMovieEntry(formData: FormData) {
     redirectWithMessage("error", "Only the site owner can manage this media log.");
   }
 
-  const { data: movie, error: fetchError } = await supabase
-    .from("media_entries")
-    .select("id, poster_path")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .single();
-
-  if (fetchError) {
-    redirectWithMessage("error", getErrorMessage(fetchError, "Could not find that movie entry."));
-  }
-
   const { error } = await supabase
     .from("media_entries")
     .delete()
@@ -172,10 +118,6 @@ export async function deleteMovieEntry(formData: FormData) {
 
   if (error) {
     redirectWithMessage("error", getErrorMessage(error, "Could not delete the movie entry."));
-  }
-
-  if (movie.poster_path) {
-    await supabase.storage.from("posters").remove([movie.poster_path]);
   }
 
   revalidatePath("/");

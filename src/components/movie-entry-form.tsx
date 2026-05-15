@@ -76,19 +76,6 @@ export function MovieEntryForm({ action }: { action: CreateMovieAction }) {
           <span className="mt-2 block text-xs text-slate-400">Up to 280 characters.</span>
         </label>
 
-        <label className="block text-sm text-slate-200">
-          Poster image
-          <input
-            name="poster"
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif"
-            className="mt-2 block w-full rounded-2xl border border-dashed border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-slate-300 file:mr-4 file:rounded-full file:border-0 file:bg-cyan-400 file:px-4 file:py-2 file:font-semibold file:text-slate-950 hover:file:bg-cyan-300"
-          />
-          <span className="mt-2 block text-xs text-slate-400">
-            JPG, PNG, WEBP, or GIF. Max 5MB.
-          </span>
-        </label>
-
         <button
           type="submit"
           className="w-full rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"

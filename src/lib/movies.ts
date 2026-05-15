@@ -1,15 +1,5 @@
 import { z } from "zod";
 
-import { getSupabaseEnv } from "@/lib/env";
-
-const maxPosterBytes = 5 * 1024 * 1024;
-const allowedPosterMimeTypes = new Set([
-  "image/gif",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-
 const movieEntrySchema = z.object({
   review: z
     .string()
@@ -58,7 +48,6 @@ export type MovieEntry = {
   created_at: string;
   id: string;
   review: string | null;
-  poster_path: string | null;
   rating: number | null;
   release_year: number | null;
   title: string;
@@ -99,69 +88,4 @@ export function parseMovieFormData(formData: FormData): ParseResult<ParsedMovieE
     },
     success: true,
   };
-}
-
-export function parsePosterUpload(formData: FormData): ParseResult<{ file: File | null }> {
-  const poster = formData.get("poster");
-
-  if (!(poster instanceof File) || poster.size === 0) {
-    return {
-      data: { file: null },
-      success: true,
-    };
-  }
-
-  if (!allowedPosterMimeTypes.has(poster.type)) {
-    return {
-      error: "Poster files must be JPG, PNG, WEBP, or GIF images.",
-      success: false,
-    };
-  }
-
-  if (poster.size > maxPosterBytes) {
-    return {
-      error: "Poster images must be 5MB or smaller.",
-      success: false,
-    };
-  }
-
-  return {
-    data: { file: poster },
-    success: true,
-  };
-}
-
-export function getPosterExtension(fileName: string, mimeType: string) {
-  const extensionFromMimeType = {
-    "image/gif": "gif",
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  }[mimeType];
-
-  if (extensionFromMimeType) {
-    return extensionFromMimeType;
-  }
-
-  const extension = fileName.split(".").pop()?.toLowerCase();
-
-  if (extension && ["gif", "jpeg", "jpg", "png", "webp"].includes(extension)) {
-    return extension === "jpeg" ? "jpg" : extension;
-  }
-
-  return null;
-}
-
-export function buildPosterPath(userId: string, extension: string) {
-  return `${userId}/${crypto.randomUUID()}.${extension}`;
-}
-
-export function getPosterUrl(path: string) {
-  const { url } = getSupabaseEnv();
-  const encodedPath = path
-    .split("/")
-    .map((part) => encodeURIComponent(part))
-    .join("/");
-
-  return `${url}/storage/v1/object/public/posters/${encodedPath}`;
 }

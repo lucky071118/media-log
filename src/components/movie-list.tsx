@@ -1,4 +1,4 @@
-import { getPosterUrl, type MovieEntry } from "@/lib/movies";
+import { type MovieEntry } from "@/lib/movies";
 
 type DeleteMovieAction = (formData: FormData) => Promise<void>;
 
@@ -34,30 +34,12 @@ export function MovieList({
   return (
     <section className="space-y-4">
       {movies.map((movie) => {
-        const posterUrl = movie.poster_path ? getPosterUrl(movie.poster_path) : null;
-
         return (
           <article
             key={movie.id}
             className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/20"
           >
-            <div className="grid gap-0 md:grid-cols-[180px_1fr]">
-              <div className="border-b border-white/10 bg-slate-950/70 md:border-r md:border-b-0">
-                {posterUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={posterUrl}
-                    alt={`${movie.title} poster`}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full min-h-56 items-center justify-center text-sm uppercase tracking-[0.2em] text-slate-500">
-                    No poster
-                  </div>
-                )}
-              </div>
-
-              <div className="p-6">
+            <div className="p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-3">
@@ -100,7 +82,6 @@ export function MovieList({
                 ) : (
                   <p className="mt-5 text-sm italic text-slate-400">No review yet.</p>
                 )}
-              </div>
             </div>
           </article>
         );

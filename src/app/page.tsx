@@ -48,7 +48,7 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   const { data, error: entriesError } = await supabase
     .from("media_entries")
-    .select("id, title, release_year, watched_on, rating, review, poster_path, created_at")
+    .select("id, title, release_year, watched_on, rating, review, created_at")
     .order("watched_on", { ascending: false })
     .order("created_at", { ascending: false });
 
@@ -208,7 +208,7 @@ function Hero() {
         </h1>
         <p className="max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
           Visitors can browse every film you have watched, while only your owner account can score
-          titles, upload posters, write quick reviews, and manage the archive through Supabase.
+          titles, write quick reviews, and manage the archive through Supabase.
         </p>
       </div>
 

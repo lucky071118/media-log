@@ -10,7 +10,7 @@ export function AuthCard({ action }: { action: SignInAction }) {
         <h2 className="text-3xl font-semibold text-white">Sign in to manage your log</h2>
         <p className="max-w-2xl text-sm leading-7 text-slate-300">
           Visitors can read your movie diary, but only the owner account can add ratings, short
-          reviews, posters, or delete entries.
+          reviews, or delete entries.
         </p>
       </div>
 
@@ -18,7 +18,6 @@ export function AuthCard({ action }: { action: SignInAction }) {
         {[
           "Public read access for your personal Letterboxd-style log",
           "Owner-only management through Supabase Auth and RLS",
-          "Poster image uploads stored in a Supabase bucket",
         ].map((item) => (
           <div key={item} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm">
             {item}

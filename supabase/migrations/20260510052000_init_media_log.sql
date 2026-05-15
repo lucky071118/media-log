@@ -18,7 +18,6 @@ create table if not exists public.media_entries (
   watched_on date not null default current_date,
   rating integer,
   review text,
-  poster_path text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
   constraint media_entries_title_length check (char_length(title) between 1 and 120),
@@ -64,50 +63,3 @@ on public.media_entries
 for delete
 to authenticated
 using (auth.uid() = user_id);
-
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values (
-  'posters',
-  'posters',
-  true,
-  5242880,
-  array['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-)
-on conflict (id) do nothing;
-
-create policy "Poster images are public"
-on storage.objects
-for select
-to public
-using (bucket_id = 'posters');
-
-create policy "Authenticated users can upload poster images"
-on storage.objects
-for insert
-to authenticated
-with check (
-  bucket_id = 'posters'
-  and (storage.foldername(name))[1] = auth.uid()::text
-);
-
-create policy "Authenticated users can update their poster images"
-on storage.objects
-for update
-to authenticated
-using (
-  bucket_id = 'posters'
-  and (storage.foldername(name))[1] = auth.uid()::text
-)
-with check (
-  bucket_id = 'posters'
-  and (storage.foldername(name))[1] = auth.uid()::text
-);
-
-create policy "Authenticated users can delete their poster images"
-on storage.objects
-for delete
-to authenticated
-using (
-  bucket_id = 'posters'
-  and (storage.foldername(name))[1] = auth.uid()::text
-);

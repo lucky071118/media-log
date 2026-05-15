@@ -7,8 +7,7 @@ A personal, public-facing media diary built with **Next.js**, **Supabase**, SQL 
 - Shows **your media log publicly** to visitors
 - Lets **only the owner account** add or delete entries
 - Supports **0 to 5 star scores**
-- Supports a **short review/comment** for each movie
-- Stores poster uploads in **Supabase Storage**
+- Supports a **short review/comment** for each media entry
 
 ## Stack
 
@@ -119,12 +118,10 @@ npx supabase db pull
 
 - The initial migration creates:
   - `public.media_entries`
-  - the `posters` storage bucket
   - public read access for the media log
   - authenticated write policies for owner-managed entries
 - Supabase Auth is configured for magic-link email login.
 - Email signup is disabled so you can keep management access limited to your own account.
-- Storage object paths are prefixed with the authenticated user id.
 
 ## Deploying to Vercel
 
