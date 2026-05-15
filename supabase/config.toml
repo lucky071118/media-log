@@ -1,4 +1,4 @@
-project_id = "movie-log"
+project_id = "media-log"
 
 [api]
 enabled = true

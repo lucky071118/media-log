@@ -1,10 +1,10 @@
-# Movie Log
+# Media Log
 
-A personal, public-facing movie diary built with **Next.js**, **Supabase**, SQL **migrations**, and **Vercel** deployment in mind.
+A personal, public-facing media diary built with **Next.js**, **Supabase**, SQL **migrations**, and **Vercel** deployment in mind.
 
 ## What this app does
 
-- Shows **your movie log publicly** to visitors
+- Shows **your media log publicly** to visitors
 - Lets **only the owner account** add or delete entries
 - Supports **0 to 5 star scores**
 - Supports a **short review/comment** for each movie
@@ -89,9 +89,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Access model
 
-- Anyone can read the movie log.
+- Anyone can read the media log.
 - Only authenticated owner sessions can create or delete entries.
-- The database migration enables public `select` access for movie entries and keeps write operations behind authenticated row-level security.
+- The database migration enables public `select` access for media entries and keeps write operations behind authenticated row-level security.
 - The app only sends sign-in links to the configured owner email.
 
 ## Working with migrations
@@ -118,9 +118,9 @@ npx supabase db pull
 ## Supabase setup notes
 
 - The initial migration creates:
-  - `public.movie_entries`
+  - `public.media_entries`
   - the `posters` storage bucket
-  - public read access for the movie log
+  - public read access for the media log
   - authenticated write policies for owner-managed entries
 - Supabase Auth is configured for magic-link email login.
 - Email signup is disabled so you can keep management access limited to your own account.
