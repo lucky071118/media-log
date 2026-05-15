@@ -2,6 +2,12 @@
 
 A personal, public-facing media diary built with **Next.js**, **Supabase**, SQL **migrations**, and **Vercel** deployment in mind.
 
+## Philosophy
+
+**Don't over-design. Keep it simple.**
+
+This is a personal tool for one person. Every decision should favour the simplest solution that works — no abstractions for imagined future requirements, no complexity that doesn't earn its place today.
+
 ## What this app does
 
 - Shows **your media log publicly** to visitors
