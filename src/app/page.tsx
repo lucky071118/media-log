@@ -47,7 +47,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   let moviesError: string | null = null;
 
   const { data, error: entriesError } = await supabase
-    .from("movie_entries")
+    .from("media_entries")
     .select("id, title, release_year, watched_on, rating, review, poster_path, created_at")
     .order("watched_on", { ascending: false })
     .order("created_at", { ascending: false });
@@ -144,7 +144,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                     <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
                       Watch history
                     </p>
-                    <h2 className="mt-2 text-3xl font-semibold text-white">Your public movie log</h2>
+                    <h2 className="mt-2 text-3xl font-semibold text-white">Your public media log</h2>
                   </div>
 
                   {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
@@ -173,7 +173,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                       </p>
                       <h2 className="mt-2 text-2xl font-semibold text-white">Visitor access only</h2>
                       <p className="mt-2 text-sm leading-7 text-slate-300">
-                        This account is not the owner account, so the movie log stays public but
+                        This account is not the owner account, so the media log stays public but
                         read-only.
                       </p>
                     </div>
@@ -204,7 +204,7 @@ function Hero() {
           Personal movie diary
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-          Build your own public Letterboxd-style movie log.
+          Build your own public Letterboxd-style media log.
         </h1>
         <p className="max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
           Visitors can browse every film you have watched, while only your owner account can score

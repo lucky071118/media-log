@@ -28,7 +28,7 @@ export function getOwnerEmail() {
   const ownerEmail = process.env.SITE_OWNER_EMAIL?.trim().toLowerCase();
 
   if (!ownerEmail) {
-    throw new Error("Missing SITE_OWNER_EMAIL. Set it to the email address that owns the movie log.");
+    throw new Error("Missing SITE_OWNER_EMAIL. Set it to the email address that owns the media log.");
   }
 
   return ownerEmail;

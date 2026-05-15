@@ -12,7 +12,7 @@ export function SetupCard() {
         <p>
           Then create or link a Supabase project and run the SQL migration in{" "}
           <code className="rounded bg-black/20 px-2 py-1">
-            supabase/migrations/20260510052000_init_movie_log.sql
+            supabase/migrations/20260510052000_init_media_log.sql
           </code>
           .
         </p>

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Movie Log",
-  description: "Track the movies you watch with Next.js and Supabase.",
+  title: "Media Log",
+  description: "Track the media you watch with Next.js and Supabase.",
 };
 
 export default function RootLayout({

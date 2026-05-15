@@ -29,7 +29,7 @@ export async function signIn(formData: FormData) {
   }
 
   if (!isSiteOwnerEmail(email)) {
-    redirectWithMessage("error", "Only the site owner can sign in to manage this movie log.");
+    redirectWithMessage("error", "Only the site owner can sign in to manage this media log.");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -84,7 +84,7 @@ export async function createMovieEntry(formData: FormData) {
   }
 
   if (!isSiteOwnerEmail(user.email)) {
-    redirectWithMessage("error", "Only the site owner can manage this movie log.");
+    redirectWithMessage("error", "Only the site owner can manage this media log.");
   }
 
   let posterPath: string | null = null;
@@ -114,7 +114,7 @@ export async function createMovieEntry(formData: FormData) {
     }
   }
 
-  const { error } = await supabase.from("movie_entries").insert({
+  const { error } = await supabase.from("media_entries").insert({
     ...parsedMovie.data,
     poster_path: posterPath,
     user_id: user.id,
@@ -129,7 +129,7 @@ export async function createMovieEntry(formData: FormData) {
   }
 
   revalidatePath("/");
-  redirectWithMessage("message", `${parsedMovie.data.title} was added to your movie log.`);
+  redirectWithMessage("message", `${parsedMovie.data.title} was added to your media log.`);
 }
 
 export async function deleteMovieEntry(formData: FormData) {
@@ -150,11 +150,11 @@ export async function deleteMovieEntry(formData: FormData) {
   }
 
   if (!isSiteOwnerEmail(user.email)) {
-    redirectWithMessage("error", "Only the site owner can manage this movie log.");
+    redirectWithMessage("error", "Only the site owner can manage this media log.");
   }
 
   const { data: movie, error: fetchError } = await supabase
-    .from("movie_entries")
+    .from("media_entries")
     .select("id, poster_path")
     .eq("id", id)
     .eq("user_id", user.id)
@@ -165,7 +165,7 @@ export async function deleteMovieEntry(formData: FormData) {
   }
 
   const { error } = await supabase
-    .from("movie_entries")
+    .from("media_entries")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
