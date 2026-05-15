@@ -12,7 +12,6 @@ $$;
 
 create table if not exists public.media_entries (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   release_year integer,
   watched_on date not null default current_date,
@@ -45,21 +44,29 @@ for select
 to public
 using (true);
 
-create policy "Users can create their own media entries"
+create policy "Owner can create media entries"
 on public.media_entries
 for insert
 to authenticated
-with check (auth.uid() = user_id);
+with check (
+  (auth.jwt() ->> 'email') = 'lucky071118@gmail.com'
+);
 
-create policy "Users can update their own media entries"
+create policy "Owner can update media entries"
 on public.media_entries
 for update
 to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+using (
+  (auth.jwt() ->> 'email') = 'lucky071118@gmail.com'
+)
+with check (
+  (auth.jwt() ->> 'email') = 'lucky071118@gmail.com'
+);
 
-create policy "Users can delete their own media entries"
+create policy "Owner can delete media entries"
 on public.media_entries
 for delete
 to authenticated
-using (auth.uid() = user_id);
+using (
+  (auth.jwt() ->> 'email') = 'lucky071118@gmail.com'
+);

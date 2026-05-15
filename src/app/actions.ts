@@ -78,7 +78,6 @@ export async function createMediaEntry(formData: FormData) {
 
   const { error } = await supabase.from("media_entries").insert({
     ...parsedMedia.data,
-    user_id: user.id,
   });
 
   if (error) {
@@ -113,8 +112,7 @@ export async function deleteMediaEntry(formData: FormData) {
   const { error } = await supabase
     .from("media_entries")
     .delete()
-    .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("id", id);
 
   if (error) {
     redirectWithMessage("error", getErrorMessage(error, "Could not delete the entry."));
