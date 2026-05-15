@@ -7,7 +7,7 @@ export function SetupCard() {
         <p>
           Copy <code className="rounded bg-black/20 px-2 py-1">.env.example</code> to{" "}
           <code className="rounded bg-black/20 px-2 py-1">.env.local</code> and add your project
-          URL, anon key, local app URL, and owner email.
+          URL and anon key.
         </p>
         <p>
           Then create or link a Supabase project and run the SQL migration in{" "}
@@ -17,8 +17,8 @@ export function SetupCard() {
           .
         </p>
         <p>
-          Set up your owner account in Supabase Auth before signing in, because public visitors only
-          get read-only access.
+          After that, manage rows directly in the Supabase dashboard and the site will show them
+          publicly.
         </p>
       </div>
     </section>

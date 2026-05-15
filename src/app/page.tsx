@@ -1,32 +1,17 @@
-import { MediaEntryForm } from "@/components/media-entry-form";
 import { MediaList } from "@/components/media-list";
 import { SetupCard } from "@/components/setup-card";
-import { hasOwnerEmail, hasSupabaseEnv, isSiteOwnerEmail } from "@/lib/env";
+import { hasSupabaseEnv } from "@/lib/env";
 import { type MediaEntry } from "@/lib/media";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import { createMediaEntry, deleteMediaEntry, signOut } from "./actions";
-
 export const dynamic = "force-dynamic";
-
-type HomePageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
-function getSearchParam(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(date));
 }
 
-export default async function Home({ searchParams }: HomePageProps) {
-  const params = await searchParams;
-  const error = getSearchParam(params.error);
-  const message = getSearchParam(params.message);
-
-  if (!hasSupabaseEnv() || !hasOwnerEmail()) {
+export default async function Home() {
+  if (!hasSupabaseEnv()) {
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-10 md:px-10">
         <Hero />
@@ -37,25 +22,21 @@ export default async function Home({ searchParams }: HomePageProps) {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const isOwner = isSiteOwnerEmail(user?.email);
+  const supabase = createSupabaseServerClient();
 
   let entries: MediaEntry[] = [];
-  let entriesError2: string | null = null;
+  let entriesError: string | null = null;
 
-  const { data, error: entriesError } = await supabase
+  const { data, error } = await supabase
     .from("media_entries")
     .select("id, title, release_year, watched_on, rating, review, created_at")
     .order("watched_on", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (entriesError) {
-    entriesError2 = entriesError.message;
+  if (error) {
+    entriesError = error.message;
   } else {
-    entries = data satisfies MediaEntry[];
+    entries = data ?? [];
   }
 
   const ratedEntries = entries.filter((entry) => entry.rating !== null);
@@ -73,124 +54,38 @@ export default async function Home({ searchParams }: HomePageProps) {
       <Hero />
 
       <main className="mt-10 space-y-8">
-        {message ? (
-          <Banner tone="success">{message}</Banner>
-        ) : error ? (
-          <Banner tone="error">{error}</Banner>
-        ) : null}
+        <section className="grid gap-4 md:grid-cols-4">
+          <MetricCard label="Entries logged" value={String(entries.length)} />
+          <MetricCard label="Average rating" value={averageRating} />
+          <MetricCard label="Last watched" value={lastWatched} />
+          <MetricCard label="Access" value="Public archive" />
+        </section>
 
-        {!user ? (
-          <>
-            <section className="grid gap-4 md:grid-cols-4">
-              <MetricCard label="Entries logged" value={String(entries.length)} />
-              <MetricCard label="Average rating" value={averageRating} />
-              <MetricCard label="Last watched" value={lastWatched} />
-              <MetricCard label="Access" value="Public archive" />
-            </section>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                  Watch history
-                </p>
-                <h2 className="mt-2 text-3xl font-semibold text-white">
-                  My personal Letterboxd
-                </h2>
-              </div>
-
-              {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
-              <MediaList deleteAction={deleteMediaEntry} isOwner={false} entries={entries} />
+        <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+                Watch history
+              </p>
+              <h2 className="mt-2 text-3xl font-semibold text-white">My public media log</h2>
             </div>
-          </>
-        ) : (
-          <>
-            <section className="grid gap-4 md:grid-cols-4">
-              <MetricCard label="Viewing as" value={user.email ?? "Unknown user"} />
-              <MetricCard label="Entries logged" value={String(entries.length)} />
-              <MetricCard label="Average rating" value={averageRating} />
-              <MetricCard label="Last watched" value={lastWatched} />
-            </section>
 
-            {isOwner ? (
-              <div className="grid gap-8 xl:grid-cols-[380px_1fr]">
-                <div className="space-y-6">
-                  <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                          Owner dashboard
-                        </p>
-                        <h2 className="mt-2 text-2xl font-semibold text-white">Welcome back</h2>
-                        <p className="mt-2 text-sm leading-7 text-slate-300">
-                          Add an entry, give it a score from 0 to 5 stars, and write a short review.
-                        </p>
-                      </div>
-                      <form action={signOut}>
-                        <button
-                          type="submit"
-                          className="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200 transition hover:border-cyan-300 hover:text-white"
-                        >
-                          Sign out
-                        </button>
-                      </form>
-                    </div>
-                  </section>
+            {entriesError ? <Banner tone="error">{entriesError}</Banner> : null}
+            <MediaList entries={entries} />
+          </div>
 
-                  <MediaEntryForm action={createMediaEntry} />
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                      Watch history
-                    </p>
-                    <h2 className="mt-2 text-3xl font-semibold text-white">Your public media log</h2>
-                  </div>
-
-                  {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
-                  <MediaList deleteAction={deleteMediaEntry} isOwner={true} entries={entries} />
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-8 xl:grid-cols-[1fr_380px]">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                      Watch history
-                    </p>
-                    <h2 className="mt-2 text-3xl font-semibold text-white">My personal Letterboxd</h2>
-                  </div>
-
-                  {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
-                  <MediaList deleteAction={deleteMediaEntry} isOwner={false} entries={entries} />
-                </div>
-
-                <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                        Read-only session
-                      </p>
-                      <h2 className="mt-2 text-2xl font-semibold text-white">Visitor access only</h2>
-                      <p className="mt-2 text-sm leading-7 text-slate-300">
-                        This account is not the owner account, so the media log stays public but
-                        read-only.
-                      </p>
-                    </div>
-                    <form action={signOut}>
-                      <button
-                        type="submit"
-                        className="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200 transition hover:border-cyan-300 hover:text-white"
-                      >
-                        Sign out
-                      </button>
-                    </form>
-                  </div>
-                </section>
-              </div>
-            )}
-          </>
-        )}
+          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+              MVP workflow
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-white">Edit everything in Supabase</h2>
+            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
+              <p>This app only reads from the database and shows the latest log to every visitor.</p>
+              <p>Add, edit, or delete rows directly in the Supabase dashboard whenever you want.</p>
+              <p>Keep the product simple: one table, one public page, no in-app admin tools.</p>
+            </div>
+          </section>
+        </section>
       </main>
     </div>
   );
@@ -204,19 +99,19 @@ function Hero() {
           Personal media diary
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-          Build your own public Letterboxd-style media log.
+          A simple public media log powered by Supabase.
         </h1>
         <p className="max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-          Visitors can browse every film you have watched, while only your owner account can score
-          titles, write quick reviews, and manage the archive through Supabase.
+          Visitors can browse every entry you add, and you manage the database directly in the
+          Supabase dashboard.
         </p>
       </div>
 
       <div className="grid gap-4">
         {[
-          "Public watch log with owner-only editing",
-          "0 to 5 star scoring and short review comments",
-          "Supabase migrations, storage, and Vercel-ready deployment",
+          "Public watch log with no in-app admin flow",
+          "Optional ratings and short review comments",
+          "Supabase-backed and ready to deploy",
         ].map((item) => (
           <div
             key={item}

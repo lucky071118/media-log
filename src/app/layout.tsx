@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Media Log",
-  description: "Track the media you watch with Next.js and Supabase.",
+  description: "A simple public media log powered by Next.js and Supabase.",
 };
 
 export default function RootLayout({
