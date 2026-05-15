@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const movieEntrySchema = z.object({
+const mediaEntrySchema = z.object({
   review: z
     .string()
     .trim()
@@ -26,17 +26,17 @@ const movieEntrySchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, "Add a movie title.")
-    .max(120, "Movie titles must be 120 characters or fewer."),
+    .min(1, "Add a title.")
+    .max(120, "Titles must be 120 characters or fewer."),
   watchedOn: z
     .string()
     .trim()
     .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
-      message: "Choose the date you watched the movie.",
+      message: "Choose the date you watched it.",
     }),
 });
 
-type ParsedMovieEntry = {
+type ParsedMediaEntry = {
   review: string | null;
   rating: number | null;
   release_year: number | null;
@@ -44,7 +44,7 @@ type ParsedMovieEntry = {
   watched_on: string;
 };
 
-export type MovieEntry = {
+export type MediaEntry = {
   created_at: string;
   id: string;
   review: string | null;
@@ -65,8 +65,8 @@ function getFirstIssueMessage(error: z.ZodError) {
   return error.issues[0]?.message ?? "There was a problem with your form data.";
 }
 
-export function parseMovieFormData(formData: FormData): ParseResult<ParsedMovieEntry> {
-  const result = movieEntrySchema.safeParse({
+export function parseMediaFormData(formData: FormData): ParseResult<ParsedMediaEntry> {
+  const result = mediaEntrySchema.safeParse({
     review: getString(formData, "review"),
     rating: getString(formData, "rating"),
     releaseYear: getString(formData, "releaseYear"),

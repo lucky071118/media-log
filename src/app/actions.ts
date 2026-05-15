@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getBaseUrl, getErrorMessage, isSiteOwnerEmail } from "@/lib/env";
-import { parseMovieFormData } from "@/lib/movies";
+import { parseMediaFormData } from "@/lib/media";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function redirectWithMessage(kind: "error" | "message", message: string): never {
@@ -55,11 +55,11 @@ export async function signOut() {
   redirect("/");
 }
 
-export async function createMovieEntry(formData: FormData) {
-  const parsedMovie = parseMovieFormData(formData);
+export async function createMediaEntry(formData: FormData) {
+  const parsedMedia = parseMediaFormData(formData);
 
-  if (!parsedMovie.success) {
-    redirectWithMessage("error", parsedMovie.error);
+  if (!parsedMedia.success) {
+    redirectWithMessage("error", parsedMedia.error);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -69,7 +69,7 @@ export async function createMovieEntry(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    redirectWithMessage("error", "Sign in before adding a movie to your log.");
+    redirectWithMessage("error", "Sign in before adding an entry to your log.");
   }
 
   if (!isSiteOwnerEmail(user.email)) {
@@ -77,23 +77,23 @@ export async function createMovieEntry(formData: FormData) {
   }
 
   const { error } = await supabase.from("media_entries").insert({
-    ...parsedMovie.data,
+    ...parsedMedia.data,
     user_id: user.id,
   });
 
   if (error) {
-    redirectWithMessage("error", getErrorMessage(error, "Could not save the movie entry."));
+    redirectWithMessage("error", getErrorMessage(error, "Could not save the entry."));
   }
 
   revalidatePath("/");
-  redirectWithMessage("message", `${parsedMovie.data.title} was added to your media log.`);
+  redirectWithMessage("message", `${parsedMedia.data.title} was added to your media log.`);
 }
 
-export async function deleteMovieEntry(formData: FormData) {
+export async function deleteMediaEntry(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
 
   if (!id) {
-    redirectWithMessage("error", "Missing movie entry identifier.");
+    redirectWithMessage("error", "Missing entry identifier.");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -103,7 +103,7 @@ export async function deleteMovieEntry(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    redirectWithMessage("error", "Sign in before deleting a movie entry.");
+    redirectWithMessage("error", "Sign in before deleting an entry.");
   }
 
   if (!isSiteOwnerEmail(user.email)) {
@@ -117,9 +117,9 @@ export async function deleteMovieEntry(formData: FormData) {
     .eq("user_id", user.id);
 
   if (error) {
-    redirectWithMessage("error", getErrorMessage(error, "Could not delete the movie entry."));
+    redirectWithMessage("error", getErrorMessage(error, "Could not delete the entry."));
   }
 
   revalidatePath("/");
-  redirectWithMessage("message", "The movie entry was removed from your log.");
+  redirectWithMessage("message", "The entry was removed from your log.");
 }

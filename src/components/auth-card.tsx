@@ -9,7 +9,7 @@ export function AuthCard({ action }: { action: SignInAction }) {
         </p>
         <h2 className="text-3xl font-semibold text-white">Sign in to manage your log</h2>
         <p className="max-w-2xl text-sm leading-7 text-slate-300">
-          Visitors can read your movie diary, but only the owner account can add ratings, short
+          Visitors can read your media log, but only the owner account can add ratings, short
           reviews, or delete entries.
         </p>
       </div>

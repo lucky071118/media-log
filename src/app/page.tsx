@@ -1,11 +1,11 @@
-import { MovieEntryForm } from "@/components/movie-entry-form";
-import { MovieList } from "@/components/movie-list";
+import { MediaEntryForm } from "@/components/media-entry-form";
+import { MediaList } from "@/components/media-list";
 import { SetupCard } from "@/components/setup-card";
 import { hasOwnerEmail, hasSupabaseEnv, isSiteOwnerEmail } from "@/lib/env";
-import { type MovieEntry } from "@/lib/movies";
+import { type MediaEntry } from "@/lib/media";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import { createMovieEntry, deleteMovieEntry, signOut } from "./actions";
+import { createMediaEntry, deleteMediaEntry, signOut } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -43,8 +43,8 @@ export default async function Home({ searchParams }: HomePageProps) {
   } = await supabase.auth.getUser();
   const isOwner = isSiteOwnerEmail(user?.email);
 
-  let movies: MovieEntry[] = [];
-  let moviesError: string | null = null;
+  let entries: MediaEntry[] = [];
+  let entriesError2: string | null = null;
 
   const { data, error: entriesError } = await supabase
     .from("media_entries")
@@ -53,20 +53,20 @@ export default async function Home({ searchParams }: HomePageProps) {
     .order("created_at", { ascending: false });
 
   if (entriesError) {
-    moviesError = entriesError.message;
+    entriesError2 = entriesError.message;
   } else {
-    movies = data satisfies MovieEntry[];
+    entries = data satisfies MediaEntry[];
   }
 
-  const ratedMovies = movies.filter((movie) => movie.rating !== null);
+  const ratedEntries = entries.filter((entry) => entry.rating !== null);
   const averageRating =
-    ratedMovies.length > 0
+    ratedEntries.length > 0
       ? (
-          ratedMovies.reduce((total, movie) => total + (movie.rating ?? 0), 0) /
-          ratedMovies.length
+          ratedEntries.reduce((total, entry) => total + (entry.rating ?? 0), 0) /
+          ratedEntries.length
         ).toFixed(1)
       : "—";
-  const lastWatched = movies[0]?.watched_on ? formatDate(movies[0].watched_on) : "Nothing yet";
+  const lastWatched = entries[0]?.watched_on ? formatDate(entries[0].watched_on) : "Nothing yet";
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 md:px-10">
@@ -82,7 +82,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         {!user ? (
           <>
             <section className="grid gap-4 md:grid-cols-4">
-              <MetricCard label="Movies logged" value={String(movies.length)} />
+              <MetricCard label="Entries logged" value={String(entries.length)} />
               <MetricCard label="Average rating" value={averageRating} />
               <MetricCard label="Last watched" value={lastWatched} />
               <MetricCard label="Access" value="Public archive" />
@@ -98,15 +98,15 @@ export default async function Home({ searchParams }: HomePageProps) {
                 </h2>
               </div>
 
-              {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
-              <MovieList deleteAction={deleteMovieEntry} isOwner={false} movies={movies} />
+              {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
+              <MediaList deleteAction={deleteMediaEntry} isOwner={false} entries={entries} />
             </div>
           </>
         ) : (
           <>
             <section className="grid gap-4 md:grid-cols-4">
               <MetricCard label="Viewing as" value={user.email ?? "Unknown user"} />
-              <MetricCard label="Movies logged" value={String(movies.length)} />
+              <MetricCard label="Entries logged" value={String(entries.length)} />
               <MetricCard label="Average rating" value={averageRating} />
               <MetricCard label="Last watched" value={lastWatched} />
             </section>
@@ -122,7 +122,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                         </p>
                         <h2 className="mt-2 text-2xl font-semibold text-white">Welcome back</h2>
                         <p className="mt-2 text-sm leading-7 text-slate-300">
-                          Add a movie, give it a score from 0 to 5 stars, and write a short review.
+                          Add an entry, give it a score from 0 to 5 stars, and write a short review.
                         </p>
                       </div>
                       <form action={signOut}>
@@ -136,7 +136,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                     </div>
                   </section>
 
-                  <MovieEntryForm action={createMovieEntry} />
+                  <MediaEntryForm action={createMediaEntry} />
                 </div>
 
                 <div className="space-y-4">
@@ -147,8 +147,8 @@ export default async function Home({ searchParams }: HomePageProps) {
                     <h2 className="mt-2 text-3xl font-semibold text-white">Your public media log</h2>
                   </div>
 
-                  {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
-                  <MovieList deleteAction={deleteMovieEntry} isOwner={true} movies={movies} />
+                  {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
+                  <MediaList deleteAction={deleteMediaEntry} isOwner={true} entries={entries} />
                 </div>
               </div>
             ) : (
@@ -161,8 +161,8 @@ export default async function Home({ searchParams }: HomePageProps) {
                     <h2 className="mt-2 text-3xl font-semibold text-white">My personal Letterboxd</h2>
                   </div>
 
-                  {moviesError ? <Banner tone="error">{moviesError}</Banner> : null}
-                  <MovieList deleteAction={deleteMovieEntry} isOwner={false} movies={movies} />
+                  {entriesError2 ? <Banner tone="error">{entriesError2}</Banner> : null}
+                  <MediaList deleteAction={deleteMediaEntry} isOwner={false} entries={entries} />
                 </div>
 
                 <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
@@ -201,7 +201,7 @@ function Hero() {
     <header className="grid gap-8 rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20 lg:grid-cols-[1.3fr_0.7fr]">
       <div className="space-y-5">
         <p className="text-sm font-semibold uppercase tracking-[0.4em] text-cyan-300">
-          Personal movie diary
+          Personal media diary
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
           Build your own public Letterboxd-style media log.
