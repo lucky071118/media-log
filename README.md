@@ -11,14 +11,14 @@ This is a personal tool for one person. Every decision should favour the simples
 ## What this app does
 
 - Shows **your media log publicly** to visitors
-- Lets **only the owner account** add or delete entries
+- Reads **media entries directly from Supabase**
 - Supports **0 to 5 star scores**
 - Supports a **short review/comment** for each media entry
 
 ## Stack
 
 - **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS
-- **Backend:** Supabase Auth, Postgres, Storage
+- **Backend:** Supabase Postgres
 - **Schema management:** SQL migrations in `supabase/migrations`
 - **Deployment:** Vercel
 
@@ -33,11 +33,7 @@ cp .env.example .env.local
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-SITE_OWNER_EMAIL=you@example.com
 ```
-
-`SITE_OWNER_EMAIL` is the only email address allowed to request a management sign-in link from the app.
 
 ## Required
 
@@ -46,8 +42,7 @@ Before the site is fully usable, you still need to:
 1. Create a Supabase project.
 2. Set the environment variables in `.env.local` and later in Vercel.
 3. Run the migrations against your Supabase database.
-4. Create the owner auth user in Supabase Auth with the same email as `SITE_OWNER_EMAIL`.
-5. Add your production auth callback URL in Supabase before going live.
+4. Add rows to `media_entries` in the Supabase dashboard.
 
 ## Local development
 
@@ -75,16 +70,7 @@ npx supabase start
 npx supabase db reset
 ```
 
-5. Create your owner auth user in Supabase.
-
-Because signup is disabled, create the account manually in Supabase Auth before trying to sign in:
-
-- in local Supabase Studio, or
-- in the Supabase dashboard for your hosted project
-
-Use the same email address as `SITE_OWNER_EMAIL`.
-
-6. Start the app:
+5. Start the app:
 
 ```bash
 npm run dev
@@ -95,9 +81,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Access model
 
 - Anyone can read the media log.
-- Only authenticated owner sessions can create or delete entries.
-- The database migration enables public `select` access for media entries and keeps write operations behind authenticated row-level security.
-- The app only sends sign-in links to the configured owner email.
+- The app does not include any in-app create, update, or delete workflow.
+- Add or edit rows directly in Supabase Dashboard or with SQL.
 
 ## Working with migrations
 
@@ -125,34 +110,25 @@ npx supabase db pull
 - The initial migration creates:
   - `public.media_entries`
   - public read access for the media log
-  - authenticated write policies for owner-managed entries
-- Supabase Auth is configured for magic-link email login.
-- Email signup is disabled so you can keep management access limited to your own account.
+- The app uses the anon key only to read published entries.
 
 ## Deploying to Vercel
 
 1. Push this repository to GitHub.
 2. Import the repository into Vercel.
 3. Add the same environment variables from `.env.local` in Vercel.
-4. In Supabase Auth settings, add your deployed callback URL:
-
-```text
-https://your-domain.vercel.app/auth/callback
-```
-
-5. Make sure the owner auth user exists in your production Supabase project with the same email as `SITE_OWNER_EMAIL`.
-6. Link the repo to your production Supabase project and run:
+4. Link the repo to your production Supabase project and run:
 
 ```bash
 npx supabase db push
 ```
 
-7. Redeploy on Vercel after the environment variables and schema are in place.
+5. Redeploy on Vercel after the environment variables and schema are in place.
 
 ## Project structure
 
 ```text
-src/app/                    Next.js routes and server actions
+src/app/                    Next.js routes
 src/components/             UI components
 src/lib/                    Supabase and media helpers
 supabase/migrations/        SQL schema changes
