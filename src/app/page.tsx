@@ -1,7 +1,7 @@
 import { MediaList } from "@/components/media-list";
 import { SetupCard } from "@/components/setup-card";
 import { hasSupabaseEnv } from "@/lib/env";
-import { type MediaEntry } from "@/lib/media";
+import { normalizeMediaEntries, type MediaEntry } from "@/lib/media";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +39,7 @@ export default async function Home() {
     console.error("Failed to load media entries.", error);
     entriesError = "System unavailable. Please try again later.";
   } else {
-    entries = data ?? [];
+    entries = normalizeMediaEntries(data);
   }
 
   const ratedEntries = entries.filter((entry) => entry.rating !== null);
