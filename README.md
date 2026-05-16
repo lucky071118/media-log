@@ -73,9 +73,16 @@ Store schema changes as versioned SQL files in `supabase/migrations/`.
 
 1. Push this repository to GitHub.
 2. Import the repository into Vercel.
-3. Add the required environment variables in Vercel.
-4. Apply the SQL files in `supabase/migrations/` to your production Supabase project.
-5. Redeploy on Vercel after the environment variables and schema are in place.
+3. Set the **Production Branch** to `main` in Vercel.
+4. Add the required environment variables in Vercel.
+5. Apply the SQL files in `supabase/migrations/` to your production Supabase project.
+6. Trigger one redeploy if you added the environment variables after the first import.
+
+After GitHub is connected to Vercel, you do **not** need GitHub Actions for deployment:
+
+- Every new commit pushed to `main` triggers a new **production deployment** automatically.
+- Commits on other branches can get **preview deployments** unless you disable them in Vercel.
+- Changes you make directly in the **Supabase dashboard** do **not** need a redeploy, because the app reads the latest data from Supabase at request time.
 
 ## Project structure
 
