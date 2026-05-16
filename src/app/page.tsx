@@ -12,6 +12,8 @@ function formatDate(date: string) {
 
 export default async function Home() {
   if (!hasSupabaseEnv()) {
+    console.error("Missing required environment variables for the deployed media log.");
+
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-10 md:px-10">
         <Hero />
@@ -34,7 +36,8 @@ export default async function Home() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    entriesError = error.message;
+    console.error("Failed to load media entries.", error);
+    entriesError = "System unavailable. Please try again later.";
   } else {
     entries = data ?? [];
   }
