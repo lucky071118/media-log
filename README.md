@@ -26,8 +26,12 @@ This is a personal tool for one person. Every decision should favour the simples
 
 Set these in your Vercel project:
 
+- `SUPABASE_URL=https://your-project-ref.supabase.co`
+- `SUPABASE_ANON_KEY=your-anon-key`
 - `NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`
+
+The app prefers the server-only `SUPABASE_*` variables and keeps the `NEXT_PUBLIC_*` names as a backward-compatible fallback.
 
 ## Required
 
@@ -58,6 +62,12 @@ Store schema changes as versioned SQL files in `supabase/migrations/`.
   - `public.media_entries`
   - public read access for the media log
 - The app uses the anon key only to read published entries.
+
+## Security hardening
+
+- The app sends restrictive security headers, including CSP, HSTS, clickjacking protection, and a locked-down permissions policy.
+- Media rows are validated before rendering so malformed database content does not crash the page.
+- Follow-up migrations tighten data checks and restrict anonymous reads to the exact columns the UI needs.
 
 ## Deploying to Vercel
 
