@@ -6,10 +6,7 @@ type SupabaseEnv = {
 };
 
 function readEnv(name: "SUPABASE_URL" | "SUPABASE_ANON_KEY") {
-  const legacyName =
-    name === "SUPABASE_URL" ? "NEXT_PUBLIC_SUPABASE_URL" : "NEXT_PUBLIC_SUPABASE_ANON_KEY";
-
-  return process.env[name] ?? process.env[legacyName];
+  return process.env[name];
 }
 
 export function hasSupabaseEnv() {
@@ -22,7 +19,7 @@ export function getSupabaseEnv(): SupabaseEnv {
 
   if (!url || !anonKey) {
     throw new Error(
-      "Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_ANON_KEY, or fall back to NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+      "Missing Supabase environment variables. Set SUPABASE_URL and SUPABASE_ANON_KEY.",
     );
   }
 
