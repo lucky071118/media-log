@@ -24,59 +24,19 @@ This is a personal tool for one person. Every decision should favour the simples
 
 ## Environment variables
 
-Copy `.env.example` to `.env.local` and fill in your values:
+Set these in your Vercel project:
 
-```bash
-cp .env.example .env.local
-```
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
+- `NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`
 
 ## Required
 
 Before the site is fully usable, you still need to:
 
 1. Create a Supabase project.
-2. Set the environment variables in `.env.local` and later in Vercel.
+2. Set the environment variables in Vercel.
 3. Run the migrations against your Supabase database.
 4. Add rows to `media_entries` in the Supabase dashboard.
-
-## Local development
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Check that the Supabase CLI is available:
-
-```bash
-npx supabase --help
-```
-
-3. Start local Supabase services:
-
-```bash
-npx supabase start
-```
-
-4. Apply the migration locally:
-
-```bash
-npx supabase db reset
-```
-
-5. Start the app:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
 
 ## Access model
 
@@ -86,24 +46,11 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Working with migrations
 
-Create a new migration:
+Store schema changes as versioned SQL files in `supabase/migrations/`.
 
-```bash
-npx supabase migration new add_some_change
-```
-
-Apply pending migrations to your linked remote project:
-
-```bash
-npx supabase link --project-ref your-project-ref
-npx supabase db push
-```
-
-Bring dashboard-side changes back into version control:
-
-```bash
-npx supabase db pull
-```
+- Add a new timestamped `.sql` file for each schema change.
+- Run that SQL against your Supabase project from the Dashboard SQL editor or another SQL client.
+- Keep the files in git as the source of truth for schema history.
 
 ## Supabase setup notes
 
@@ -116,13 +63,8 @@ npx supabase db pull
 
 1. Push this repository to GitHub.
 2. Import the repository into Vercel.
-3. Add the same environment variables from `.env.local` in Vercel.
-4. Link the repo to your production Supabase project and run:
-
-```bash
-npx supabase db push
-```
-
+3. Add the required environment variables in Vercel.
+4. Apply the SQL files in `supabase/migrations/` to your production Supabase project.
 5. Redeploy on Vercel after the environment variables and schema are in place.
 
 ## Project structure
@@ -132,5 +74,4 @@ src/app/                    Next.js routes
 src/components/             UI components
 src/lib/                    Supabase and media helpers
 supabase/migrations/        SQL schema changes
-supabase/config.toml        Local Supabase CLI configuration
 ```
