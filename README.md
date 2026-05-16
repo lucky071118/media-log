@@ -28,10 +28,8 @@ Set these in your Vercel project:
 
 - `SUPABASE_URL=https://your-project-ref.supabase.co`
 - `SUPABASE_ANON_KEY=your-anon-key`
-- `NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`
 
-The app prefers the server-only `SUPABASE_*` variables and keeps the `NEXT_PUBLIC_*` names as a backward-compatible fallback.
+The app reads only the server-side `SUPABASE_*` variables.
 
 ## Required
 
