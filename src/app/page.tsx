@@ -6,10 +6,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(date));
-}
-
 export default async function Home() {
   if (!hasSupabaseEnv()) {
     console.error("Missing required environment variables for the deployed media log.");
@@ -42,26 +38,13 @@ export default async function Home() {
     entries = normalizeMediaEntries(data);
   }
 
-  const ratedEntries = entries.filter((entry) => entry.rating !== null);
-  const averageRating =
-    ratedEntries.length > 0
-      ? (
-          ratedEntries.reduce((total, entry) => total + (entry.rating ?? 0), 0) /
-          ratedEntries.length
-        ).toFixed(1)
-      : "—";
-  const lastWatched = entries[0]?.watched_on ? formatDate(entries[0].watched_on) : "Nothing yet";
-
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 md:px-10">
       <Hero />
 
       <main className="mt-10 space-y-8">
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4">
           <MetricCard label="Entries logged" value={String(entries.length)} />
-          <MetricCard label="Average rating" value={averageRating} />
-          <MetricCard label="Last watched" value={lastWatched} />
-          <MetricCard label="Access" value="Public archive" />
         </section>
 
         <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
