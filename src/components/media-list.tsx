@@ -15,8 +15,11 @@ function renderRating(rating: number | null) {
 export function MediaList({ entries }: { entries: MediaEntry[] }) {
   if (entries.length === 0) {
     return (
-      <section className="rounded-3xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300">
-        Your log is empty. Add your first row in Supabase to start building your watch history.
+      <section className="rounded-3xl border border-dashed border-white/20 bg-white/5 p-8 text-sm text-slate-300 backdrop-blur">
+        <p className="font-medium text-white">Your log is waiting for its first feature entry.</p>
+        <p className="mt-3 leading-7 text-slate-300">
+          Add your first row in Supabase to begin shaping your watch history.
+        </p>
       </section>
     );
   }
@@ -27,34 +30,35 @@ export function MediaList({ entries }: { entries: MediaEntry[] }) {
         return (
           <article
             key={entry.id}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/20"
+            className="group overflow-hidden rounded-3xl border border-white/15 bg-[linear-gradient(140deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] shadow-2xl shadow-black/20 backdrop-blur transition hover:-translate-y-0.5 hover:border-cyan-300/35"
           >
-            <div className="p-6">
+            <div className="h-1.5 w-full bg-[linear-gradient(90deg,rgba(34,211,238,0.7),rgba(167,139,250,0.8),rgba(244,114,182,0.75))]" />
+            <div className="p-6 md:p-7">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-2xl font-semibold text-white">{entry.title}</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight text-white">{entry.title}</h3>
                     {entry.release_year ? (
-                      <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
+                      <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">
                         {entry.release_year}
                       </span>
                     ) : null}
                   </div>
-                  <p className="text-sm text-slate-300">Watched {formatDate(entry.watched_on)}</p>
+                  <p className="text-sm text-slate-300">Watched on {formatDate(entry.watched_on)}</p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
-                <span className="rounded-full bg-cyan-400/15 px-3 py-1 font-medium text-cyan-200">
+                <span className="rounded-full border border-cyan-300/35 bg-cyan-400/15 px-3 py-1 font-medium text-cyan-100">
                   {renderRating(entry.rating)}
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1 text-slate-300">
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-slate-300">
                   Added {formatDate(entry.created_at)}
                 </span>
               </div>
 
               {entry.review ? (
-                <p className="mt-5 whitespace-pre-wrap text-sm leading-7 text-slate-200">
+                <p className="mt-5 whitespace-pre-wrap text-sm leading-7 text-slate-100/95">
                   {entry.review}
                 </p>
               ) : (
