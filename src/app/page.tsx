@@ -6,10 +6,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(date));
-}
-
 export default async function Home() {
   if (!hasSupabaseEnv()) {
     console.error("Missing required environment variables for the deployed media log.");
@@ -42,52 +38,25 @@ export default async function Home() {
     entries = normalizeMediaEntries(data);
   }
 
-  const ratedEntries = entries.filter((entry) => entry.rating !== null);
-  const averageRating =
-    ratedEntries.length > 0
-      ? (
-          ratedEntries.reduce((total, entry) => total + (entry.rating ?? 0), 0) /
-          ratedEntries.length
-        ).toFixed(1)
-      : "—";
-  const lastWatched = entries[0]?.watched_on ? formatDate(entries[0].watched_on) : "Nothing yet";
-
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 md:px-10">
       <Hero />
 
       <main className="mt-10 space-y-8">
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4">
           <MetricCard label="Entries logged" value={String(entries.length)} />
-          <MetricCard label="Average rating" value={averageRating} />
-          <MetricCard label="Last watched" value={lastWatched} />
-          <MetricCard label="Access" value="Public archive" />
         </section>
 
-        <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                Watch history
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold text-white">My public media log</h2>
-            </div>
-
-            {entriesError ? <Banner tone="error">{entriesError}</Banner> : null}
-            <MediaList entries={entries} />
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+              Watch history
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">My public media log</h2>
           </div>
 
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-              MVP workflow
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">Edit everything in Supabase</h2>
-            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
-              <p>This app only reads from the database and shows the latest log to every visitor.</p>
-              <p>Add, edit, or delete rows directly in the Supabase dashboard whenever you want.</p>
-              <p>Keep the product simple: one table, one public page, no in-app admin tools.</p>
-            </div>
-          </section>
+          {entriesError ? <Banner tone="error">{entriesError}</Banner> : null}
+          <MediaList entries={entries} />
         </section>
       </main>
     </div>
@@ -96,34 +65,16 @@ export default async function Home() {
 
 function Hero() {
   return (
-    <header className="grid gap-8 rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20 lg:grid-cols-[1.3fr_0.7fr]">
+    <header className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20">
       <div className="space-y-5">
         <p className="text-sm font-semibold uppercase tracking-[0.4em] text-cyan-300">
           Personal media diary
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-          A simple public media log powered by Supabase.
+          A personal log of films, shows, and everything in between.
         </h1>
-        <p className="max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-          Visitors can browse every entry you add, and you manage the database directly in the
-          Supabase dashboard.
-        </p>
       </div>
 
-      <div className="grid gap-4">
-        {[
-          "Public watch log with no in-app admin flow",
-          "Optional ratings and short review comments",
-          "Supabase-backed and ready to deploy",
-        ].map((item) => (
-          <div
-            key={item}
-            className="rounded-3xl border border-white/10 bg-slate-950/60 p-5 text-sm text-slate-200"
-          >
-            {item}
-          </div>
-        ))}
-      </div>
     </header>
   );
 }
