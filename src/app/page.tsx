@@ -42,11 +42,7 @@ export default async function Home() {
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 md:px-10">
       <Hero />
 
-      <main className="mt-10 space-y-8">
-        <section className="grid gap-4">
-          <MetricCard label="Entries logged" value={String(entries.length)} />
-        </section>
-
+      <main className="mt-10">
         <section className="space-y-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
@@ -70,7 +66,7 @@ function Hero() {
         <p className="text-sm font-semibold uppercase tracking-[0.4em] text-cyan-300">
           Personal media diary
         </p>
-        <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
+        <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-white md:text-6xl">
           A personal log of films, shows, and everything in between.
         </h1>
       </div>
@@ -96,14 +92,5 @@ function Banner({
     >
       {children}
     </div>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <section className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/20">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{label}</p>
-      <p className="mt-3 break-words text-2xl font-semibold text-white">{value}</p>
-    </section>
   );
 }
