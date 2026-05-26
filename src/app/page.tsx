@@ -47,30 +47,16 @@ export default async function Home() {
           <MetricCard label="Entries logged" value={String(entries.length)} />
         </section>
 
-        <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                Watch history
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold text-white">My public media log</h2>
-            </div>
-
-            {entriesError ? <Banner tone="error">{entriesError}</Banner> : null}
-            <MediaList entries={entries} />
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+              Watch history
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">My public media log</h2>
           </div>
 
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-              MVP workflow
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold text-white">Edit everything in Supabase</h2>
-            <div className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
-              <p>This app only reads from the database and shows the latest log to every visitor.</p>
-              <p>Add, edit, or delete rows directly in the Supabase dashboard whenever you want.</p>
-              <p>Keep the product simple: one table, one public page, no in-app admin tools.</p>
-            </div>
-          </section>
+          {entriesError ? <Banner tone="error">{entriesError}</Banner> : null}
+          <MediaList entries={entries} />
         </section>
       </main>
     </div>
@@ -79,34 +65,16 @@ export default async function Home() {
 
 function Hero() {
   return (
-    <header className="grid gap-8 rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20 lg:grid-cols-[1.3fr_0.7fr]">
+    <header className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20">
       <div className="space-y-5">
         <p className="text-sm font-semibold uppercase tracking-[0.4em] text-cyan-300">
           Personal media diary
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-          A simple public media log powered by Supabase.
+          A personal log of films, shows, and everything in between.
         </h1>
-        <p className="max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-          Visitors can browse every entry you add, and you manage the database directly in the
-          Supabase dashboard.
-        </p>
       </div>
 
-      <div className="grid gap-4">
-        {[
-          "Public watch log with no in-app admin flow",
-          "Optional ratings and short review comments",
-          "Supabase-backed and ready to deploy",
-        ].map((item) => (
-          <div
-            key={item}
-            className="rounded-3xl border border-white/10 bg-slate-950/60 p-5 text-sm text-slate-200"
-          >
-            {item}
-          </div>
-        ))}
-      </div>
     </header>
   );
 }
