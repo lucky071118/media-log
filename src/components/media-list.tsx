@@ -44,7 +44,7 @@ export function MediaList({ entries }: { entries: MediaEntry[] }) {
                       </span>
                     ) : null}
                   </div>
-                  <p className="text-sm text-slate-300">Watched on {formatDate(entry.watched_on)}</p>
+                  <p className="text-sm text-slate-300">Added {formatDate(entry.created_at)}</p>
                 </div>
               </div>
 
