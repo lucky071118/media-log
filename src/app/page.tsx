@@ -28,8 +28,7 @@ export default async function Home() {
 
   const { data, error } = await supabase
     .from("media_entries")
-    .select("id, title, release_year, watched_on, rating, review, created_at")
-    .order("watched_on", { ascending: false })
+    .select("id, title, release_year, rating, review, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {

@@ -5,7 +5,6 @@ export type MediaEntry = {
   rating: number | null;
   release_year: number | null;
   title: string;
-  watched_on: string;
 };
 
 const MAX_TITLE_LENGTH = 120;
@@ -68,17 +67,15 @@ function normalizeMediaEntry(value: unknown): MediaEntry | null {
 
   const id = normalizeRequiredText(value.id, 64);
   const title = normalizeRequiredText(value.title, MAX_TITLE_LENGTH);
-  const watchedOn = normalizeDate(value.watched_on);
   const createdAt = normalizeDate(value.created_at);
 
-  if (!id || !title || !watchedOn || !createdAt) {
+  if (!id || !title || !createdAt) {
     return null;
   }
 
   return {
     id,
     title,
-    watched_on: watchedOn,
     created_at: createdAt,
     release_year:
       value.release_year === null || value.release_year === undefined
